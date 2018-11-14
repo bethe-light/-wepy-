@@ -1,0 +1,182 @@
+<style lang="less">
+.video{
+	margin-bottom: 40rpx;
+	position: relative;
+}
+.model-img{
+	width: 100%;
+	height: 420rpx;
+}
+.model-btn{
+	position:absolute;
+  left:0;
+  top:0;
+  bottom:0;
+  right:0;
+  margin:auto;
+  width:100rpx;
+  height:100rpx;
+  border-radius:50%;
+  background-color: rgba(0,0,0,.3);
+}
+.play-icon{
+  margin:28rpx 40rpx;
+  border-top:26rpx solid transparent;
+  border-left:36rpx solid #FFDD54;
+  border-bottom:22rpx solid transparent;
+}
+.text{
+  width: 90%;
+  height: 80rpx;
+  line-height: 80rpx;
+  text-align: center;
+  background-color: #FFDD54;
+  color: #2B2B2B;
+  border-radius: 36rpx;
+  position: fixed;
+  bottom: 0;
+  margin-bottom: 10rpx;
+}
+ .sign {
+    position: fixed;
+    bottom: 0;
+    left: 5%;
+    text-align: center;
+    width: 90%;
+    height: 80rpx;
+    margin-bottom: 10rpx;
+    border-radius: 36rpx;
+    // background-color: #9F9F9F; 
+    background-color: #FFDD54; // 激活状态  
+  }
+  .signIn {
+    line-height: 80rpx;
+    color: #2B2B2B;
+  }
+   .sign_tip {
+    font-size: 44rpx;
+    text-align: center;
+    top: -30rpx;
+  }
+  .review_tip {
+    text-align: center;
+    font-size: 36rpx;
+    top: -30rpx;
+  }
+  .modal_image {
+    width: 100%;
+    height: 300rpx;
+    border-radius: 20rpx 20rpx 0 0;
+  }
+  .modal_cancel {
+    width:40rpx;
+    height:40rpx;
+    display:inline-block;
+    overflow:hidden;
+    position: absolute;
+    left:86%;
+    top: 10%; 
+  }
+
+  .mask{
+    position: absolute;
+    height: 100rpx;
+    width: 750rpx;
+    top: 0;
+    background: rgba(0,0,0,.5);
+    z-index: 9999999;
+  }
+</style>
+
+<template>
+  <view class="container">
+  
+   <video id="myVideo" objectFit='fill' src="http://wxsnsdy.tc.qq.com/105/20210/snsdyvideodownload?filekey=30280201010421301f0201690402534804102ca905ce620b1241b726bc41dcff44e00204012882540400&bizid=1023&hy=SH&fileparam=302c020101042530230204136ffd93020457e3c4ff02024ef202031e8d7f02030f42400204045a320a0201000400" danmu-list="{{danmuList}}" enable-danmu danmu-btn controls>
+             <cover-view class='mask'></cover-view></video>
+    
+    <view class="margin_bottom" wx:for="{{items}}" wx:key="unique">
+      <view class="video-container">
+          <view  class="video" data-id="{{item.id}}" bindtap="videoPlay" >
+            <video wx:if="{{curr_id === item.id}}" id="myVideo" style="width:{{videoWidth}}rpx;height:{{videoHeight}}rpx;" src="{{item.src}}" 
+            poster="{{item.poster}}"  objectFit="cover"  controls>
+  
+            </video>
+            <view wx:else >
+                <image class="model-img" style="width:{{videoWidth}}rpx;height:{{videoHeight}}rpx;" mode="aspectFill" src="{{item.poster}}"/>
+                <view class="model-btn">
+                    <view class="play-icon"></view>
+                </view>
+            </view>
+          </view>
+      </view>
+    </view>
+    <view class="text">
+      <view class="toast">
+        <modal hidden="{{modalHidden}}" bindcancel="modalCancel" bindconfirm="modalConfirm" no-cancel="{{showCancel}}" confirm-text="前往复习">
+          <image class="modal_image" src="../images/failed.png" mode="aspectFill"/>
+          <image class="modal_cancel" src="../images/modal_cancel.png" @tap="cancel"/>
+          <view class="sign_tip">签到失败</view>
+          <view class="review_tip">请复习最新视频完成签到</view>
+        </modal>
+      </view>
+      <button class="sign" bindtap="sign_in">
+        <view class="signIn">签到</view>
+      </button>
+    </view>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+  export default class test extends wepy.page {
+    data = {
+      curr_id: '',
+      modalHidden: true,
+      showCancel: true,
+      videoWidth: 750,
+      videoHeight: 750 * 9 / 16,
+      items: [
+        {
+          id: 1, src: 'https://wxsnsdy.tc.qq.com/105/20210/snsdyvideodownload?filekey=30280201010421301f0201690402534804102ca905ce620b1241b726bc41dcff44e00204012882540400&bizid=1023&hy=SH&fileparam=302c020101042530230204136ffd93020457e3c4ff02024ef202031e8d7f02030f42400204045a320a0201000400', poster: '../images/pic1.png'
+        }, {
+          id: 2, src: 'https://wxsnsdy.tc.qq.com/105/20210/snsdyvideodownload?filekey=30280201010421301f0201690402534804102ca905ce620b1241b726bc41dcff44e00204012882540400&bizid=1023&hy=SH&fileparam=302c020101042530230204136ffd93020457e3c4ff02024ef202031e8d7f02030f42400204045a320a0201000400', poster: 'http://ow74m25lk.bkt.clouddn.com/shilan.jpg'
+        },
+        {
+          id: 3, src: 'https://wxsnsdy.tc.qq.com/105/20210/snsdyvideodownload?filekey=30280201010421301f0201690402534804102ca905ce620b1241b726bc41dcff44e00204012882540400&bizid=1023&hy=SH&fileparam=302c020101042530230204136ffd93020457e3c4ff02024ef202031e8d7f02030f42400204045a320a0201000400', poster: 'http://ow74m25lk.bkt.clouddn.com/shilan.jpg'
+        },
+        {
+          id: 4, src: 'https://wxsnsdy.tc.qq.com/105/20210/snsdyvideodownload?filekey=30280201010421301f0201690402534804102ca905ce620b1241b726bc41dcff44e00204012882540400&bizid=1023&hy=SH&fileparam=302c020101042530230204136ffd93020457e3c4ff02024ef202031e8d7f02030f42400204045a320a0201000400', poster: 'http://ow74m25lk.bkt.clouddn.com/shilan.jpg'
+        }
+      ]
+    }
+    async onReady() {
+      this.videoContext = wepy.createVideoContext('myVideo')
+      let systemInfo = await wepy.getSystemInfo()
+      if (systemInfo) {
+        console.log(systemInfo)
+        let windowWidth = systemInfo.windowWidth
+        this.videoWidth = windowWidth * 2
+        this.videoHeight = 9 * this.windowWidth / 16
+        this.$apply()
+        console.log(this.videoWidth)
+      }
+    }
+    methods = {
+      videoPlay(e) {
+        this.curr_id = e.currentTarget.dataset.id
+        this.videoContext.play()
+      },
+      modalConfirm() {
+        this.modalHidden = true
+      },
+      modalCancel() {
+        this.modalHidden = true
+      },
+      cancel() {
+        this.modalHidden = true
+      },
+      sign_in() {
+        this.modalHidden = false
+      }
+    }
+  }
+</script>
