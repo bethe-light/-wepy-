@@ -1,5 +1,12 @@
 <style lang="less">
-
+.container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+}
 .scrol {
   height: 934rpx;
   overflow: hidden;
@@ -87,19 +94,24 @@
       course: '',
       videoList: []
     }
+    props = {
+      courseName: {
+        type: String,
+        default: null
+      }
+    }
     dealResponse(res) {
       for (let i = 0; i < res.length; i++) {
         res[i].uploadTime = res[i].uploadTime.split(' ')[0]
         res[i].courseName = res[i].courseName + '-Chapter' + res[i].videoName.split('-')[1]
       }
-      // console.log(res)
       return res
     }
     async onLoad() { // 腾讯视频默认宽高 300:225（4:3） 获取设备的宽高成4:3比例设置与原型差别较大，此时设置宽为设备宽度*2rpx，高默认为690rpx
       this.videoContext = wepy.createVideoContext('myVideo')
       let status = wepy.getStorageSync('signStatus')
       try {
-        let Info = await api.getVideo()
+        let Info = await api.getVideo({courseName: this.courseName})
         if (Info.statusCode === 200) {
           // let videoInfo = JSON.stringify(Info.data)
           let videoInfo = Info.data.data

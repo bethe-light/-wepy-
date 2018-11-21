@@ -3,8 +3,8 @@
 </style>
 <template>
   <view class="container">
-    <video></video>
-    <sign></sign>
+    <video :courseName.sync="courseName"></video>
+    <sign :id.sync="childId"></sign>
   </view>
 </template>
 <script>
@@ -16,14 +16,15 @@
       video: video,
       sign: sign
     }
+    data = {
+      courseName: 'k1',
+      childId: 6
+    }
     config = {
       navigationBarTitleText: '复习视频'
     }
-    onLoad() {
-    }
-    data = {
-    }
-    watch = {
+    onLoad(option) {
+      // console.log(option)
     }
   }
 </script>
