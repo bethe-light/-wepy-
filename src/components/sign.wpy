@@ -94,7 +94,7 @@
 </style>
 <template>
   <view class="footer_sign">
-    <block wx:if="{{signStatus}}">
+    <block wx:if="{{!signStatus}}">
       <view class="toast" style="display:{{modaldisplay}}" catchtouchmove="ture"> <!--  catchtouchmove 阻止弹窗下拉时引起底层下拉 -->
       <!-- modal api 即将不进行维护或将抛弃 -->
       <!-- <modal hidden="{{modalHidden}}" bindconfirm="modalConfirm" no-cancel="{{showCancel}}" confirm-text="前往复习">
@@ -143,11 +143,12 @@
   export default class Sign extends wepy.component {
     data = {
       modaldisplay: 'none',
-      signStatus: null, // 签到弹窗
+      // signStatus: null, // 签到弹窗
       courseSignNumber: 0
     }
     props = {
-      id: Number
+      id: Number,
+      signStatus: Boolean
     }
     methods = {
       sign_in() {
@@ -161,7 +162,7 @@
       }
     }
     async onLoad() {
-      this.signStatus = wepy.getStorageSync('signStatus')
+      // this.signStatus = wepy.getStorageSync('signStatus') || false
       try {
         let res = await api.signIn({id: this.id})
         this.courseSignNumber = res.data.data.courseSignNumber

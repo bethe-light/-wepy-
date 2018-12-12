@@ -115,7 +115,7 @@
             <view class="l-rowVerMid slider gender">
                 <image class="slider-img" src='../images/gender.png' />
                 <view class='slider-title'>性别</view>
-                <view class="slider-text">{{childInfo.gender === 0 ? '男' : '女'}}</view>
+                <view class="slider-text">{{childInfo.gender === '1' ? '男' : '女'}}</view>
             </view>
             <view class="l-rowVerMid slider age">
                 <image class="slider-img" src='../images/age.png' />
@@ -130,19 +130,19 @@
             <view class="l-rowVerMid slider canlendar">
                 <image class="slider-img" src='../images/canlendar.png' />
                 <view class='slider-title'>课程进度</view>
-                <view class="slider-text">{{childInfo.courseName + '-book' + childInfo.courseSignNumber}}</view>
+                <view class="slider-text">{{'k' + childInfo.courseName + '-book' + childInfo.courseProcess}}</view>
             </view>
             <view class="l-rowVerMid slider clock">
                 <image class="slider-img" src='../images/clock.png' />
                 <view class='slider-title'>课时进度</view>
-                <view class="slider-text">{{childInfo.courseSignNumber + '/80'}}</view>
+                <view class="slider-text">{{childInfo.courseProcess + '/' + childInfo.courseSum}}</view>
             </view>
             <view class="l-rowVerMid slider video">
                 <image class="slider-img" src='../images/video.png' />
                 <view class='slider-title'>复习视频</view>
                 <view class="slider-text">
-                    <image class="slider-ding" src='../images/ding.png' />
-                    <image class="slider-next" @tap='jumpToVideos' src='../images/next.png' />
+                    <image class="slider-ding" hidden='{{!showDing}}' src='../images/ding.png'></image>
+                    <image class="slider-next" @tap='jumpToVideos' src='../images/next.png'></image>
                 </view>
             </view>
         </view>
@@ -161,6 +161,7 @@ export default class UserCenter extends page {
 
     data = {
         windowHeight: 1206,
+        showDing: true,
         childInfo: {}
     }
 
@@ -177,18 +178,42 @@ export default class UserCenter extends page {
             })
             .then(res => {
                 console.log(res)
+                this.childInfo.avatar = res.data
+                this.$apply()
             })
         },
         jumpToVideos (e) {
-            this.$WX.jumpTo('./review')
+            this.$parent.globalData.showDing = false;
+            this.$apply();
+            let url = `./review?id=${this.childInfo.id}&coursename=k${this.childInfo.courseName}`
+            console.log(url)
+            this.$WX.jumpTo(url)
         }
     }
 
     onLoad (options) {
         console.log('usercenter')
+        // console.log(options)
         // 设置窗口高度
         this.windowHeight = this.$parent.windowHeight || 1206
         this.childInfo = options
+        this.showDing = this.$parent.globalData.showDing
+        this.$apply()
+    }
+
+    onShow () {
+        this.showDing = this.$parent.globalData.showDing
+        this.$apply();
+    }
+
+    onUnload () {
+        this.$parent.globalData.showDing = false;
+        this.$apply();
+    }
+
+    onHide () {
+        this.$parent.globalData.showDing = false;
+        this.$apply();
     }
 }
 </script>

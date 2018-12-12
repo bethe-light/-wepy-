@@ -3,8 +3,8 @@
 </style>
 <template>
   <view class="container">
-    <video :courseName.sync="courseName"></video>
-    <sign :id.sync="childId"></sign>
+    <sign :id.sync="childId" :signStatus.sync="signStatus"></sign>
+    <video :id.sync="childId" :latest.sync="latest"></video>
   </view>
 </template>
 <script>
@@ -17,14 +17,27 @@
       sign: sign
     }
     data = {
-      courseName: 'k1',
-      childId: 6
+      childId: -1,
+      signStatus: false,
+      latest: 0
     }
     config = {
       navigationBarTitleText: '复习视频'
     }
     onLoad(option) {
-      // console.log(option)
+      this.coursename = option.coursename
+      this.childId = option.id
+      this.$apply()
+      if(wepy.getStorageSync('videoLength') === 'undefined'){
+        wepy.setStorageSync('videoLength', 0)
+      }
+    }
+    onShow() {
+      this.signStatus = this.$parent.globalData.signStatus
+      if(this.signStatus === true) {
+        this.latest = -1
+      }
+      this.$apply()
     }
   }
 </script>

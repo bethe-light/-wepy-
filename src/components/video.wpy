@@ -89,47 +89,48 @@
       poster: '../images/pic1.png', // video cover
       comma: '../images/dian.png',
       new: '../images/new.png',
-      latest: 0,
       date: '',
       course: '',
       videoList: []
     }
     props = {
-      courseName: {
-        type: String,
-        default: null
+      id: {
+        type: Number
+      },
+      latest: {
+        type: Number
       }
     }
     dealResponse(res) {
-      for (let i = 0; i < res.length; i++) {
+      let len = res.length
+      if(len > wepy.getStorageSync('videoLength')) {
+        // wepy.setStorageSync('signStatus', false)
+        console.log(this.$parent.$parent.globalData.signStatus)
+        this.$parent.$parent.globalData.signStatus = false
+      }
+      wepy.setStorageSync('videoLength', len)
+      for (let i = 0; i < len; i++) {
+        res[i].url = encodeRUIComponent(res[i].url)
         res[i].uploadTime = res[i].uploadTime.split(' ')[0]
         res[i].courseName = res[i].courseName + '-Chapter' + res[i].videoName.split('-')[1]
       }
       return res
     }
     async onLoad() { // 腾讯视频默认宽高 300:225（4:3） 获取设备的宽高成4:3比例设置与原型差别较大，此时设置宽为设备宽度*2rpx，高默认为690rpx
-      this.videoContext = wepy.createVideoContext('myVideo')
-      let status = wepy.getStorageSync('signStatus')
       try {
-        let Info = await api.getVideo({courseName: this.courseName})
-        if (Info.statusCode === 200) {
-          // let videoInfo = JSON.stringify(Info.data)
-          let videoInfo = Info.data.data
-          this.videoList = this.dealResponse(videoInfo)
-          this.$apply()
-        }
+        let Info = await api.getVideo({id: this.id})
+        // let videoInfo = JSON.stringify(Info.data)
+        let videoInfo = Info.data.data.videoList
+        this.videoList = this.dealResponse(videoInfo)
+        this.$apply()
       } catch (err) {
         console.log(err)
-      }
-      if (!status) {
-        this.latest = -1
-        this.$apply()
       }
     }
     methods = {
       videoPlay(e) {
         wepy.navigateTo({
-          url: '../pages/playvideo?url=' + e.currentTarget.dataset.url + '&name=' + e.currentTarget.dataset.name + '&index=' + e.currentTarget.dataset.index
+          url: '../pages/playvideo?name=' + e.currentTarget.dataset.name + '&index=' + e.currentTarget.dataset.index + '&url=' + e.currentTarget.dataset.url
         })
       }
     }

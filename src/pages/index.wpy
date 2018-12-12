@@ -164,43 +164,20 @@
       windowHeight: 1206,
       imgList: [
         {
-          src: '../images/pic1.png',
+          src: '',
           active: true
         },
         {
-          src: '../images/pic1.png',
+          src: '',
           active: false
         },
         {
-          src: '../images/pic1.png',
+          src: '',
           active: false
         }
       ],
       childList: [
-        {
-          "age": 21, //年龄
-          "avatar": "../images/girl.png", //头像
-          "birthday": "2018-09-00", //生日
-          "courseName": "k2", //课程名字 
-          "courseSignNumber": 5, //课程签到数
-          "courseSum": 80, //课程视频总数，默认为80集
-          "gender": 0, //性别
-          "id": 6, //孩子 id
-          "score": 50, //积分数
-          "username": "theson2" //孩子姓名
-        },
-        {
-          "age": 21, //年龄
-          "avatar": "../images/girl.png", //头像
-          "birthday": "2018-09-00", //生日
-          "courseName": "k2", //课程名字 
-          "courseSignNumber": 5, //课程签到数
-          "courseSum": 80, //课程视频总数，默认为80集
-          "gender": 0, //性别
-          "id": 6, //孩子 id
-          "score": 50, //积分数
-          "username": "theson2" //孩子姓名
-        }
+        
       ]
     }
 
@@ -220,10 +197,25 @@
       }
     }
 
-    onLoad () {
+    onLoad (options) {
       console.log('index')
+      console.log(options)
       // 设置窗口高度
       this.windowHeight = this.$parent.windowHeight || 1206
+
+      this.$API.getChildren({id: Number(options.id), header: {Authentication: options.Authentication}})
+      .then(res => {
+        this.childList = res.data.data
+        this.$apply()
+        console.log(this.childList)
+        return this.$API.getCarousel()
+      })
+      .then(res => {
+        this.imgList.forEach((ele, idx) => {
+          ele.src = res.data.data[idx].photo
+        });
+        this.$apply()
+      })
     }
   }
 </script>

@@ -6,8 +6,6 @@
 import wepy from 'wepy'
 import 'wepy-async-function'
 
-import { setStore } from 'wepy-redux'
-
 export default class extends wepy.app {
   config = {
     pages: [
@@ -27,7 +25,9 @@ export default class extends wepy.app {
   }
 
   globalData = {
-    windowHeight: 1206
+    windowHeight: 1206,
+    signStatus: false，
+    showDing: true
   }
 
   constructor () {
@@ -37,7 +37,6 @@ export default class extends wepy.app {
   }
 
   onLoad () {
-    
   }
 }
 </script>

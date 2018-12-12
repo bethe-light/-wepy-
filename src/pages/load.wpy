@@ -67,8 +67,8 @@
         <view class="l-col modal">
             <view class="l-rowAllMid modal-input">
                 <input  type="number"
-                        value='{{veriCode}}'
                         style="padding-left: 5rpx;"
+                        @blur='getVerCode'
                         placeholder="请输入验证码" 
                         maxlength='4' 
                         placeholder-style='color: #818399; font-size: 32rpx;'/>
@@ -94,6 +94,9 @@
         }
 
         methods = {
+            getVerCode (e) {
+                this.veriCode = e.detail.value
+            },
             cancel (e) {
                 this.showModal = false;
                 this.$apply();
@@ -101,9 +104,33 @@
             getInfo (e) {
                 console.log(e)
                 if (e.detail.userInfo) {
-                    this.$API.veriCode({code: this.veriCode})
+                    let login = {}
+
+                    this.$API.veriCode({
+                        data:{code: Number(this.veriCode)}
+                    })
                     .then(res => {
-                        console.log(res)
+                        if (res.data.code === 1) {
+                            this.$WX.toast(res.data.msg);
+                        } else {
+                            // 获取家长id
+                            login.parentId = res.data.data.parentId
+                            return this.$WX.wxLogin();
+                        }
+                    })
+                    .then(res => {
+                        login.code = res.code;
+                        return this.$WX.wxGetUserInfo();
+                    })
+                    .then(res => {
+                        login.avatar = res.userInfo.avatarUrl;
+                        login.nickname = res.userInfo.nickName;
+                        // 用户登录
+                        return this.$API.login({data: login});
+                    })
+                    .then(res => {
+                        let url = `./index?id=${res.data.data.id}&Authentication=${res.header.Authentication}`
+                        this.$WX.jumpTo(url)
                     })
                 }
             }
@@ -140,13 +167,13 @@
                     .then(res => {
                         login.avatar = res.userInfo.avatarUrl;
                         login.nickname = res.userInfo.nickName;
-                        console.log(login)
                         // 用户登录
                         return this.$API.login({data: login});
                     })
                     .then(res => {
                         console.log(res)
-                        this.$WX.jumpTo('./index')
+                        let url = `./index?id=${res.data.data.id}&Authentication=${res.header.Authentication}`
+                        this.$WX.jumpTo(url)
                     })
                 }
             })
